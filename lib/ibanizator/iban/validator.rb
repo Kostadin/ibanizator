@@ -33,30 +33,35 @@ class Ibanizator
         end.to_i
       end
 
-      def valid_accout_number_checksum?
+      def valid_account_number_checksum?
         begin
-          if iban.start_with?('DE') 
+          if iban.start_with?('DE')
             case iban[4..11]
               when '66650085' # Sparkasse Pforzheim Calw
                 checksum = 0
                 weights = [2,3,4,5,6,7,2,3,4]              
                 weights.each_with_index do |weight, index|
-                  checksum += iban[index+12].to_i * weight
+                  checksum += iban[20-index].to_i * weight
                 end
-                checksum = 11 - (checksum % 11)
+                checksum = (11 - (checksum % 11)) % 11
                 return iban[21].to_i == checksum
               when '76250000' # Sparkasse Fürth
                 checksum = 0
                 weights = [2,1,2,1,2,1,2,1,2]              
                 weights.each_with_index do |weight, index|
-                  checksum += iban[index+12].to_i * weight
+                  product = iban[20-index].to_i * weight
+                  product.to_s.each_char do |c|
+                    checksum += c.to_i
+                  end
                 end
-                checksum = 10 - (checksum % 10)
+                checksum = (10 - (checksum % 10)) % 10
                 return iban[21].to_i == checksum
             end
           end
           return true
-        rescue
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace
           return false
         end
       end
