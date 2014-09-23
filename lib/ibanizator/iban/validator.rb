@@ -8,7 +8,7 @@ class Ibanizator
       end
 
       def validate
-        valid_length? && valid_checksum?
+        valid_length? && valid_checksum? && valid_account_number_checksum?
       end
 
       private
@@ -31,6 +31,34 @@ class Ibanizator
         iban.gsub(/[A-Z]/) do |match|
           match.ord - 'A'.ord + 10
         end.to_i
+      end
+
+      def valid_accout_number_checksum?
+        begin
+          if iban.start_with?('DE') 
+            case iban[4..11]
+              when '66650085' # Sparkasse Pforzheim Calw
+                checksum = 0
+                weights = [2,3,4,5,6,7,2,3,4]              
+                weights.each_with_index do |weight, index|
+                  checksum += iban[index+12].to_i * weight
+                end
+                checksum = 11 - (checksum % 11)
+                return iban[21].to_i == checksum
+              when '76250000' # Sparkasse Fürth
+                checksum = 0
+                weights = [2,1,2,1,2,1,2,1,2]              
+                weights.each_with_index do |weight, index|
+                  checksum += iban[index+12].to_i * weight
+                end
+                checksum = 10 - (checksum % 10)
+                return iban[21].to_i == checksum
+            end
+          end
+          return true
+        rescue
+          return false
+        end
       end
     end
   end # Iban
