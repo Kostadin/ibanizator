@@ -43,7 +43,8 @@ class Ibanizator
                 weights.each_with_index do |weight, index|
                   checksum += iban[20-index].to_i * weight
                 end
-                checksum = (11 - (checksum % 11)) % 11
+                checksum = (11 - (checksum % 11)) % 10
+                #puts "Checksum: #{checksum}, Actual value: #{iban[21].to_i}" 
                 return iban[21].to_i == checksum
               when '76250000' # Sparkasse Fürth
                 checksum = 0
