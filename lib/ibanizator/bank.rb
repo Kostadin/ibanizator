@@ -9,7 +9,7 @@ class Ibanizator
     attr_reader :bic, :name, :bank_code
 
     def initialize(bic, name, bank_code)
-      @bic, @name, @bank_code = bic, name, bank_code
+      @bic, @name, @bank_code = bic.strip, name.strip, bank_code.strip
     end
   end
 end

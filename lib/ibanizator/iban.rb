@@ -28,8 +28,13 @@ class Ibanizator
     memoize :country_code
 
     def extended_data
-      if country_code == :DE
-        ExtendedData::DE.new(self)
+      case country_code 
+        when :DE
+          ExtendedData::DE.new(self)
+        when :FI
+          ExtendedData::FI.new(self)
+        else
+          nil
       end
     end
     memoize :extended_data

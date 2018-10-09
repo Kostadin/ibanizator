@@ -1,4 +1,5 @@
 require_relative 'extended_data/de'
+require_relative 'extended_data/fi'
 require_relative 'invalid'
 
 class Ibanizator
